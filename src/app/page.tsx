@@ -52,6 +52,32 @@ export default function Home() {
         throw new Error("No content in iframe");
       }
 
+      // Wait for images to load in the iframe
+      const images = iframeContent.querySelectorAll('img');
+      const imagePromises = Array.from(images).map(img => {
+        return new Promise((resolve, reject) => {
+          if (img.complete) {
+            resolve(true);
+          } else {
+            img.onload = () => resolve(true);
+            img.onerror = () => {
+              console.error('Failed to load image:', img.src);
+              resolve(false); // Resolve as false to not break Promise.all
+            };
+          }
+        });
+      });
+
+      const allImagesLoaded = (await Promise.all(imagePromises)).every(loaded => loaded);
+
+      if (!allImagesLoaded) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Not all images were loaded in the preview. Screenshot might be incomplete.",
+        });
+      }
+      
       const canvas = await html2canvas(iframeContent, {
         width: width,
         height: height,
@@ -59,7 +85,11 @@ export default function Home() {
         scrollY: 0,
         windowWidth: width,
         windowHeight: height,
-        useCORS: true
+        useCORS: true,
+        ignoreElements: (element) => {
+          // Optionally ignore certain elements
+          return false;
+        }
       });
 
       const dataURL = canvas.toDataURL("image/png");
@@ -149,4 +179,3 @@ export default function Home() {
     </div>
   );
 }
-
