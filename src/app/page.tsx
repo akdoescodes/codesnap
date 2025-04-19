@@ -59,6 +59,7 @@ export default function Home() {
         scrollY: 0,
         windowWidth: width,
         windowHeight: height,
+        useCORS: true
       });
 
       const dataURL = canvas.toDataURL("image/png");
@@ -148,3 +149,4 @@ export default function Home() {
     </div>
   );
 }
+
