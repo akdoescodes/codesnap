@@ -8,6 +8,7 @@ import html2canvas from 'html2canvas';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function Home() {
   const [htmlCode, setHtmlCode] = useState("");
@@ -114,6 +115,13 @@ export default function Home() {
     }
   };
 
+  const handlePresetChange = (value: string) => {
+    const [newWidth, newHeight] = value.split("x").map(Number);
+    setWidth(newWidth);
+    setHeight(newHeight);
+  };
+
+
   return (
     <div className="flex flex-col items-center justify-start min-h-screen py-10 bg-secondary">
       <h1 className="text-3xl font-bold mb-4 text-primary">CodeSnap</h1>
@@ -134,6 +142,21 @@ export default function Home() {
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
+             <div className="grid gap-2">
+              <Label htmlFor="width">Preset Dimensions</Label>
+              <Select onValueChange={handlePresetChange}>
+                <SelectTrigger className="w-[200px]">
+                  <SelectValue placeholder={`${width}x${height}`} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="390x844">Phone (390x844)</SelectItem>
+                  <SelectItem value="414x896">Phone Plus (414x896)</SelectItem>
+                  <SelectItem value="375x812">iPhone X (375x812)</SelectItem>
+                  <SelectItem value="768x1024">Tablet (768x1024)</SelectItem>
+                  <SelectItem value="800x600">Default (800x600)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="width">Width</Label>
               <Input
